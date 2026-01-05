@@ -84,7 +84,7 @@ docker run -d \
   -p 8000:8000 \
   -v $(pwd)/config_data.json:/app/config_data.json \
   -v $(pwd)/media_cache:/app/media_cache \
-  -v $(pwd)/api_logs.json:/app/api_logs.json
+  -v $(pwd)/api_logs.json:/app/api_logs.json \
   bailangvvking/gemininixiang
 ```
 

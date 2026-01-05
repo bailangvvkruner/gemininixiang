@@ -1,14 +1,15 @@
 # Gemini OpenAI兼容API Docker镜像
-# 基于官方Python 3.11 slim镜像，更小的体积
-FROM python:3.11-slim
+# 基于官方Python 3.11 Alpine镜像，最小的体积
+FROM python:3.11-alpine
 
 # 设置工作目录
 WORKDIR /app
 
 # 安装系统依赖
-RUN apt-get update && apt-get install -y \
+# curl用于健康检查，build-base用于编译Python包（如果需要）
+RUN apk add --no-cache \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/cache/apk/*
 
 # 复制依赖文件
 COPY requirements.txt .
@@ -27,8 +28,8 @@ ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
 ENV HOST=0.0.0.0
 
-# 创建非root用户运行应用
-# RUN useradd -m -u 1000 appuser && \
+# # 创建非root用户运行应用（Alpine使用adduser）
+# RUN adduser -D -u 1000 appuser && \
 #     chown -R appuser:appuser /app
 # USER appuser
 
