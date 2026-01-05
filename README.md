@@ -70,7 +70,53 @@ python server.py
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-### 3. 配置 Cookie
+### 3. Docker部署（推荐）
+
+#### 构建镜像
+```bash
+docker build -t gemininixiang .
+```
+
+#### 运行容器
+```bash
+docker run -d \
+  --name gemininixiang \
+  -p 8000:8000 \
+  -v $(pwd)/config_data.json:/app/config_data.json \
+  -v $(pwd)/media_cache:/app/media_cache \
+  -v $(pwd)/api_logs.json:/app/api_logs.json
+  bailangvvking/gemininixiang
+```
+
+或者使用docker-compose（推荐）：
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  gemininixiang:
+    build: .
+    container_name: gemininixiang
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config_data.json:/app/config_data.json
+      - ./media_cache:/app/media_cache
+    restart: unless-stopped
+```
+
+运行：
+```bash
+docker-compose up -d
+```
+
+> 💡 **注意**：
+> - 首次运行前，请确保当前目录有 `config_data.json` 文件（运行一次Python服务会自动生成）
+> - `media_cache` 目录用于存储AI生成的图片和视频文件
+> - 配置文件会持久化到宿主机，容器重启不会丢失配置
+> - 访问地址：http://localhost:8000/admin
+
+### 4. 配置 Cookie
 
 1. 打开后台管理页面 `http://localhost:8000/admin`
 2. 使用默认账号登录：
@@ -86,7 +132,7 @@ python server.py
 
 > 💡 系统会自动解析 Cookie 并获取所需 Token（SNLM0E、PUSH_ID 等），无需手动填写
 
-### 4. 配置模型 ID（可选）
+### 5. 配置模型 ID（可选）
 
 如果发现模型切换不生效（例如选择 Pro 版但实际使用的是极速版），需要手动更新模型 ID：
 
@@ -116,7 +162,23 @@ python server.py
 
 > ⚠️ Google 可能会更新模型 ID，如果模型切换失效请重新抓包获取最新 ID
 
-### 5. 调用 API
+### 6. 调用 API
+
+#### 使用 curl 命令行工具
+
+```bash
+curl http://localhost:8000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-gemini" \
+  -d '{
+    "model": "gemini-3.0-flash",
+    "messages": [
+      {"role": "user", "content": "你好"}
+    ]
+  }'
+```
+
+#### 使用 Python 客户端
 
 ```python
 from openai import OpenAI

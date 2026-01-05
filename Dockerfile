@@ -28,9 +28,9 @@ ENV PORT=8000
 ENV HOST=0.0.0.0
 
 # 创建非root用户运行应用
-RUN useradd -m -u 1000 appuser && \
-    chown -R appuser:appuser /app
-USER appuser
+# RUN useradd -m -u 1000 appuser && \
+#     chown -R appuser:appuser /app
+# USER appuser
 
 # 暴露端口
 EXPOSE 8000
